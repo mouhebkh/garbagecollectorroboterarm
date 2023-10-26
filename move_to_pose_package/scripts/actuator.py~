@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import rospy
+import subprocess
+import time
+from open_manipulator_msgs.srv import SetActuatorState, SetActuatorStateRequest
+
+def set_actuator_state(enable):
+    rospy.init_node('actuator_controller', anonymous=True)
+    rospy.wait_for_service('/set_actuator_state')
+    try:
+        set_state = rospy.ServiceProxy('/set_actuator_state', SetActuatorState)
+        request = SetActuatorStateRequest()
+        request.set_actuator_state = enable
+        response = set_state(request)
+        return response.is_planned
+    except rospy.ServiceException as e:
+        print("Service call failed: %s" % e)
+
+def stop_all_ros_nodes():
+    subprocess.run(["rosnode", "kill", "-a"])
+    time.sleep(5)  # Wait for the nodes to terminate
+
+def main():
+    user_input = input("Enter 'enable' to enable the actuator or 'disable' to disable it: ").strip().lower()
+
+    # Stop all currently running ROS nodes
+    stop_all_ros_nodes()
+
+    if user_input == 'disable':
+        # Run the specified launch file
+        subprocess.Popen(["roslaunch", "open_manipulator_controller", "open_manipulator_controller.launch"])
+        time.sleep(10)  # Wait for the launch file to initiate
+        success = set_actuator_state(False)
+        state_str = "disabled" if success else "not disabled (an error occurred)"
+        print(f"The actuator is {state_str}.")
+    elif user_input == 'enable':
+        subprocess.Popen(["roslaunch", "move_to_pose_package", "joint_trajectory_controller.launch", "sim:=false"])
+        print("The actuator controller launch file is running...")
+    else:
+        print("Invalid input. Please enter either 'enable' or 'disable'.")
+
+if __name__ == "__main__":
+    main()

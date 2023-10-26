@@ -18,7 +18,7 @@ def pose_publisher():
             joint_angles_msg = JointAngles()
             joint_angles_msg.angles = angles_list
             joint_angles_msg.gripper_command = gripper_input
-            joint_angles_msg.actuator_state = actuator_input
+    joint_angles_msg.actuator_state = actuator_input
 
             pub.publish(joint_angles_msg)
         except Exception as e:

@@ -223,7 +223,6 @@ catkin_install_python(PROGRAMS
   scripts/pose_get.py
   scripts/ik_solver.py
   scripts/gripper_control.py
-  scripts/actuator.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

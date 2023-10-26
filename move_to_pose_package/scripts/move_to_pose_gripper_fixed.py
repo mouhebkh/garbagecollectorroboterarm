@@ -4,7 +4,6 @@ import sys
 import rospy
 import moveit_commander
 from move_to_pose_package.msg import JointAngles
-from open_manipulator_msgs.srv import SetActuatorState, SetActuatorStateRequest
 
 class MoveToPose:
     def __init__(self):
@@ -38,11 +37,13 @@ class MoveToPose:
             rospy.loginfo("Execution successful.")
 
     def control_gripper(self, command):
-        if -0.009 <= command <= 0.009:
-            # Set the gripper position based on the command value; adjust based on your SRDF file
-            gripper_position = [command, 0]
-            self.gripper_group.set_joint_value_target(gripper_position)
-        # Set velocity scaling factor to slow down the gripper
+        if command == 1:
+            # Logic to open the gripper; adjust based on your SRDF file
+            self.gripper_group.set_joint_value_target([0.009, 0])  
+        elif command == 0:
+            # Logic to close the gripper; adjust based on your SRDF file
+            self.gripper_group.set_joint_value_target([-0.009, 0]) 
+	    # Set velocity scaling factor to slow down the gripper
         self.gripper_group.set_max_velocity_scaling_factor(0.5)
         
         # Execute the gripper command
@@ -59,23 +60,9 @@ class MoveToPose:
         else:
             rospy.loginfo("Gripper execution successful.")
 
-    def set_actuator_state(self, state):
-        try:
-            # Create a service client for set_actuator_state
-            service_client = rospy.ServiceProxy('set_actuator_state', SetActuatorState)
-            request = SetActuatorStateRequest()
-            request.set_actuator_state = state
-            response = service_client(request)
-            return response.is_planned
-        except rospy.ServiceException as e:
-            rospy.logerr("Service call failed: %s", e)
-            return False
-
     def joint_angles_callback(self, msg):
-        self.set_actuator_state(msg.actuator_state)
         self.move_to_target(msg.angles)
         self.control_gripper(msg.gripper_command)
-
 
 if __name__ == '__main__':
     try:

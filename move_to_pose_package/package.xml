@@ -59,6 +59,10 @@
   <exec_depend>moveit_commander</exec_depend>
   <exec_depend>rospy</exec_depend>
 
+  <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <depend>open_manipulator_msgs</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
