@@ -22,6 +22,9 @@ if(NOT _res EQUAL 0 AND NOT _res EQUAL 2)
   message(FATAL_ERROR "Search for 'catkin' in workspace failed (${_cmd_str}): ${_err}")
 endif()
 
+#catkin_install_python(PROGRAMS custom_nodes/customVelPublisher.py
+#	DESTINATION /opt/ros/noetic/share/catkin/cmake
+#	)
 # include catkin from workspace or via find_package()
 if(_res EQUAL 0)
   set(catkin_EXTRAS_DIR "${CMAKE_SOURCE_DIR}/${_out}/cmake")
@@ -65,5 +68,7 @@ else()
     message(FATAL_ERROR "find_package(catkin) failed. catkin was neither found in the workspace nor in the CMAKE_PREFIX_PATH. One reason may be that no ROS setup.sh was sourced before.")
   endif()
 endif()
+
+
 
 catkin_workspace()
